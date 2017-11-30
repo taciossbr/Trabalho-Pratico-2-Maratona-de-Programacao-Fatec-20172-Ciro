@@ -65,3 +65,60 @@ void cadastrar_time(void){
     fclose(competidores);
 }
 
+
+void consultar_time(void){
+    FILE * times, * competidores;
+    
+    if ((times = fopen(ARQ_TIME, "rb")) == NULL) {
+        fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                ARQ_TIME);
+        return;
+    }
+    if ((competidores = fopen(ARQ_COMP, "rb")) == NULL){
+        fprintf(stderr, "\nErro: não foi possivel abrir o arquivo %s!\n",
+                ARQ_COMP);
+        return;
+    }
+    
+    printf("\n\nConsulta de Times\n\n");
+    
+    competidor c[3];
+    time t;
+    char t_nome[8];
+    int id;
+    printf("Digite o login do time que deseja consultar: ");
+    scanf(" %8[^\n]", t_nome);
+    //scanf(" %s%d", nome, &id);
+    id = atoi(&t_nome[4]);
+    printf("\n\n\n\n%d\n\n\n\n\n", id);
+    // desloca o indicador de posição para a posição do registro do time
+    printf("\n\n\n\n%d\n\n\n\n\n", (id - 1) * sizeof(time));
+    fseek(times, (id - 1) * sizeof(time), SEEK_SET);
+    fread(&t, sizeof(time), 1, times);
+    fclose(times);
+    
+    printf("ID:\t%d\n", t.id);
+    printf("Login:\t%s\n", t.login);
+    printf("Nome:\t%s\n", t.nome);
+    printf("Senha:\t%s\n", t.senha);
+    
+    printf("\n\nCompetidores do time\n\n");
+    fseek(competidores, (t.id - 1) * sizeof(competidor) * 3, SEEK_SET);
+    fread(&c, sizeof(competidor), 3, competidores);
+    fclose(competidores);
+    
+    int i;
+    for (i = 0; i < 3; i++){
+        printf("ID:\t%d\n", c[i].id);
+        printf("Nome:\t%s\n", c[i].nome);
+        printf("Email:\t%s\n", c[i].email);
+        printf("Data de Nascimento:\t%d/%d/%d\n",
+               c[i].nasc.dia,
+               c[i].nasc.mes,
+               c[i].nasc.dia);
+        puts("\n");
+    } 
+    
+    
+}
+
