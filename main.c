@@ -49,3 +49,26 @@ int main() {
     return 0;
 }
 
+int menu(int n, char * ops[]){
+    printf("----------------------------------\n");
+    printf("Menu\n");
+    printf("----------------------------------\n\n");
+    int i;
+    for (i = 0; i < n; i++){
+        printf("%d-\t%s\n", i + 1, ops[i]);
+    }
+    int op;
+    printf("\nEscolha a opção desejada: ");
+    scanf(" %d", &op);
+    while (1 > op || op > 7){
+        printf("Opção inválida.\n\n\n");
+        for (i = 0; i < n; i++){
+            printf("%d-\t%s\n", i + 1, ops[i]);
+        }
+        int op;
+        printf("Escolha a opção desejada: ");
+        scanf(" %d", &op);
+    }
+    return op;
+}
+

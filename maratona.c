@@ -128,16 +128,19 @@ void consultar_time(void){
         } 
     
     }
-
-
+    fclose(competidores);
+    fclose(times);
             
     
 }
 
 void listar_times(void){
     FILE * times;
-    times = fopen(ARQ_TIME, "rb"); // abre o arquivo para leitura
-
+    if ((times = fopen(ARQ_TIME, "rb")) == NULL) {
+        fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                ARQ_TIME);
+        return;
+    }
     // imprime cabeçalho da tabela
     int i;
     // imprime uma linha no começo do cabeçalho
@@ -163,6 +166,7 @@ void listar_times(void){
         putchar('-');
     }
     putchar('\n');
+    fclose(times);
 }
 
 void listar_competidores(void){
@@ -171,10 +175,19 @@ void listar_competidores(void){
         decidimos exibir apenas os caracteres iniciais das strings contendo o nome dos competidores
     */
     FILE * competidores;
-    competidores = fopen(ARQ_COMP, "rb");
+    
+    if ((competidores = fopen(ARQ_COMP, "rb")) == NULL) {
+        fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                ARQ_COMP);
+        return;
+    }
     FILE * times;
-    times = fopen(ARQ_TIME, "rb");
-
+    if ((times = fopen(ARQ_TIME, "rb")) == NULL) {
+        fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                ARQ_TIME);
+        return;
+    }
+    
     puts("Lista de Competidores\n");
     int i;
     for (i = 0; i < 132; i++){
@@ -193,7 +206,7 @@ void listar_competidores(void){
         time t;
         fseek(times, (c.id_time - 1) * sizeof(time), SEEK_SET);
         fread(&t, sizeof(time), 1, times);
-        printf("|%-51.50s| %-31.30s| %02d/%02d/%02d | %-31.30s|\n",
+        printf("|%-51.50s| %-31.30s| %02d/%02d/%04d | %-31.30s|\n",
                c.nome,
                c.email,
                c.nasc.dia,
@@ -214,10 +227,18 @@ void listar_competidores(void){
     scanf(" %c", &o);
 
     if (o == 'S' || o == 's'){
+        rewind(competidores);
+        puts("hello");
         // grava o arquivo de listagem
         FILE * listagem;
-        listagem = fopen(ARQ_LISTAGEM, "w");
+        if ((listagem = fopen(ARQ_LISTAGEM, "w")) == NULL) {
+            fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                    ARQ_COMP);
+            return;
+        }
+
         fputs("Lista de Competidores\n", listagem);
+        // imprime uma linha no cabeçalho
         for (i = 0; i < 142; i++){
             fprintf(listagem, "-");
         }
@@ -230,12 +251,13 @@ void listar_competidores(void){
         fprintf(listagem, "\n");
 
         competidor c;
-        fseek(competidores, 0, SEEK_SET);
+
         while(fread(&c, sizeof(competidor), 1, competidores) > 0){
+        puts(c.nome);
             time t;
             fseek(times, (c.id_time - 1) * sizeof(time), SEEK_SET);
             fread(&t, sizeof(time), 1, times);
-            fprintf(listagem, "|%-61.60s| %-31.30s| %02d/%02d/%02d | %-31.30s|\n",
+            fprintf(listagem, "|%-61.60s| %-31.30s| %02d/%02d/%04d | %-31.30s|\n",
                 c.nome,
                 c.email,
                 c.nasc.dia,
@@ -248,14 +270,31 @@ void listar_competidores(void){
         }
         fprintf(listagem, "\n\n");
         printf("\nA tabela foi salva no arquivo %s.\n", ARQ_LISTAGEM);
+        fclose(listagem);
     }
+    fclose(competidores);
+    fclose(times);
 }
 
 void gerar_emails(void){
-    FILE * competidores;
-    competidores = fopen(ARQ_COMP, "rb");
-    FILE * emails;
-    emails = fopen(ARQ_EMAILS, "w");
+    FILE * competidores, * times, * emails;
+    if ((competidores = fopen(ARQ_COMP, "rb")) == NULL) {
+        fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                ARQ_COMP);
+        return;
+    }
+    
+    if ((times = fopen(ARQ_TIME, "rb")) == NULL) {
+        fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                ARQ_TIME);
+        return;
+    }
+    if ((emails = fopen(ARQ_EMAILS, "w")) == NULL) {
+        fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                ARQ_EMAILS);
+        return;
+    }
+    
 
     competidor c;
     while(fread(&c, sizeof(competidor), 1, competidores) > 0){
@@ -263,4 +302,69 @@ void gerar_emails(void){
     }
 
     printf("\n\nLista de emails gravada no arquivo %s.\n\n", ARQ_EMAILS);
+    fclose(competidores);
+    fclose(emails);
 }
+
+void gerar_etiquetas(void){
+    FILE * etiquetas, * times, *competidores;
+
+    if ((competidores = fopen(ARQ_COMP, "rb")) == NULL) {
+        fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                ARQ_COMP);
+        return;
+    }
+    
+    if ((times = fopen(ARQ_TIME, "rb")) == NULL) {
+        fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                ARQ_TIME);
+        return;
+    }
+    if ((etiquetas = fopen(ARQ_ETIQUETAS, "w")) == NULL) {
+        fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
+                ARQ_ETIQUETAS);
+        return;
+    }
+    time t;
+    competidor c[3];
+    while(fread(&t, sizeof(time), 1, times) > 0){
+        fread(&c, sizeof(competidor), 3, competidores);
+        fprintf(etiquetas, "%s\n", t.nome);
+        fprintf(etiquetas, "%s\n", t.login);
+        fprintf(etiquetas, "%s\n", t.senha);
+        
+        fprintf(etiquetas, "(");
+        int i;
+        for (i = 0; i < 3; i++){
+            fclose(etiquetas);
+            imprimir_primeiro_nome(c[i].nome);
+            etiquetas = fopen(ARQ_ETIQUETAS, "a");
+            if (i + 1 != 3){
+                fprintf(etiquetas, ", ");
+            } else {
+                fprintf(etiquetas, ")\n\n");
+            }
+        }
+    }
+    fclose(etiquetas);
+    fclose(times);
+    fclose(competidores);
+}
+
+void imprimir_primeiro_nome(const char * nome){
+    FILE * etiquetas;
+    etiquetas = fopen(ARQ_ETIQUETAS, "a");
+    int i;
+    for (i = 0; nome[i] != ' ' && nome[i] != '\0'; i++){
+    //putchar(nome[i]);
+    }
+    printf("%d\n", i);
+    char primeiro[61];
+    strncpy(primeiro, nome, i);
+    primeiro[i] = '\0';
+    puts(primeiro);
+    fprintf(etiquetas, "%s", primeiro);
+    fclose(etiquetas);
+}
+
+
