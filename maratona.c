@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -88,37 +89,78 @@ void consultar_time(void){
     int id;
     printf("Digite o login do time que deseja consultar: ");
     scanf(" %8[^\n]", t_nome);
-    //scanf(" %s%d", nome, &id);
+    // scanf(" %s%d", nome, &id);
     id = atoi(&t_nome[4]);
-    printf("\n\n\n\n%d\n\n\n\n\n", id);
-    // desloca o indicador de posição para a posição do registro do time
-    printf("\n\n\n\n%d\n\n\n\n\n", (id - 1) * sizeof(time));
-    fseek(times, (id - 1) * sizeof(time), SEEK_SET);
-    fread(&t, sizeof(time), 1, times);
-    fclose(times);
+
+    // verifica se o indice é valido
+    fseek(times, 0, SEEK_END);
+    int tam = ftell(times);
+    if (id * sizeof(time) > tam){
+        fprintf(stderr, "O Time que você procura não esta cadastrado.\n");
+    } else {
+        // printf("\n\n\n\n%d\n\n\n\n\n", id);
+        // desloca o indicador de posição para a posição do registro do time
+        // printf("\n\n\n\n%d\n\n\n\n\n", (id - 1) * sizeof(time));
+        fseek(times, (id - 1) * sizeof(time), SEEK_SET);
+        fread(&t, sizeof(time), 1, times);
+        fclose(times);
+        
+        printf("\n\nID:\t%d\n", t.id);
+        printf("Login:\t%s\n", t.login);
+        printf("Nome:\t%s\n", t.nome);
+        printf("Senha:\t%s\n", t.senha);
+        
+        printf("\n\nCompetidores do time\n\n");
+        fseek(competidores, (t.id - 1) * sizeof(competidor) * 3, SEEK_SET);
+        fread(&c, sizeof(competidor), 3, competidores);
+        fclose(competidores);
+        
+        int i;
+        for (i = 0; i < 3; i++){
+            printf("ID:                    %d\n", c[i].id);
+            printf("Nome:                  %s\n", c[i].nome);
+            printf("Email:                 %s\n", c[i].email);
+            printf("Data de Nascimento:    %d/%d/%d\n",
+                c[i].nasc.dia,
+                c[i].nasc.mes,
+                c[i].nasc.dia);
+            puts("\n");
+        } 
     
-    printf("ID:\t%d\n", t.id);
-    printf("Login:\t%s\n", t.login);
-    printf("Nome:\t%s\n", t.nome);
-    printf("Senha:\t%s\n", t.senha);
-    
-    printf("\n\nCompetidores do time\n\n");
-    fseek(competidores, (t.id - 1) * sizeof(competidor) * 3, SEEK_SET);
-    fread(&c, sizeof(competidor), 3, competidores);
-    fclose(competidores);
-    
-    int i;
-    for (i = 0; i < 3; i++){
-        printf("ID:\t%d\n", c[i].id);
-        printf("Nome:\t%s\n", c[i].nome);
-        printf("Email:\t%s\n", c[i].email);
-        printf("Data de Nascimento:\t%d/%d/%d\n",
-               c[i].nasc.dia,
-               c[i].nasc.mes,
-               c[i].nasc.dia);
-        puts("\n");
-    } 
-    
+    }
+
+
+            
     
 }
 
+void listar_times(void){
+    FILE * times;
+    times = fopen(ARQ_TIME, "rb"); // abre o arquivo para leitura
+
+    // imprime cabeçalho da tabela
+    int i;
+    // imprime uma linha no começo do cabeçalho
+    for (i = 0; i < 51; i++){
+        putchar('-');
+    }
+    putchar('\n');
+    printf("|%-35.31s| %-12.8s|\n", "Nome", "Login");
+    // imprime uma linha no final do cabeçalho
+    for (i = 0; i < 51; i++){
+        putchar('-');
+    }
+    putchar('\n');
+
+    // imprime o corpo da tabela
+    time t;
+    while(fread(&t, sizeof(time), 1, times) > 0){
+        printf("|%-35.31s| %-12.8s|\n", t.nome, t.login);
+        
+    }
+    // imprime uma linha no final da tabela
+    for (i = 0; i < 51; i++){
+        putchar('-');
+    }
+    putchar('\n');
+}
