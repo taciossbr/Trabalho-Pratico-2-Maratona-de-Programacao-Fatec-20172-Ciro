@@ -166,6 +166,10 @@ void listar_times(void){
 }
 
 void listar_competidores(void){
+    /* Obs.:
+         Por questões de melhor legibilidade da tabela em telas pequenas 
+        decidimos exibir apenas os caracteres iniciais das strings contendo o nome dos competidores
+    */
     FILE * competidores;
     competidores = fopen(ARQ_COMP, "rb");
     FILE * times;
@@ -210,16 +214,17 @@ void listar_competidores(void){
     scanf(" %c", &o);
 
     if (o == 'S' || o == 's'){
+        // grava o arquivo de listagem
         FILE * listagem;
         listagem = fopen(ARQ_LISTAGEM, "w");
         fputs("Lista de Competidores\n", listagem);
-        for (i = 0; i < 132; i++){
+        for (i = 0; i < 142; i++){
             fprintf(listagem, "-");
         }
         fprintf(listagem, "\n");
-        fprintf(listagem, "|%-51.50s| %-31.30s| %-11.10s| %-31.30s|\n",
+        fprintf(listagem, "|%-61.60s| %-31.30s| %-11.10s| %-31.30s|\n",
             "Nome", "Email", "Nascimento", "Time");
-        for (i = 0; i < 132; i++){
+        for (i = 0; i < 142; i++){
             fprintf(listagem, "-");
         }
         fprintf(listagem, "\n");
@@ -230,7 +235,7 @@ void listar_competidores(void){
             time t;
             fseek(times, (c.id_time - 1) * sizeof(time), SEEK_SET);
             fread(&t, sizeof(time), 1, times);
-            fprintf(listagem, "|%-51.50s| %-31.30s| %02d/%02d/%02d | %-31.30s|\n",
+            fprintf(listagem, "|%-61.60s| %-31.30s| %02d/%02d/%02d | %-31.30s|\n",
                 c.nome,
                 c.email,
                 c.nasc.dia,
@@ -238,10 +243,14 @@ void listar_competidores(void){
                 c.nasc.ano,
                 t.nome);
         }
-        for (i = 0; i < 132; i++){
+        for (i = 0; i < 142; i++){
             fprintf(listagem, "-");
         }
         fprintf(listagem, "\n\n");
-        
+        printf("A tabela foi salva no arquivo %s.\n", ARQ_LISTAGEM);
     }
+}
+
+void gerar_emails(void){
+
 }
