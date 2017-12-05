@@ -247,10 +247,20 @@ void listar_competidores(void){
             fprintf(listagem, "-");
         }
         fprintf(listagem, "\n\n");
-        printf("A tabela foi salva no arquivo %s.\n", ARQ_LISTAGEM);
+        printf("\nA tabela foi salva no arquivo %s.\n", ARQ_LISTAGEM);
     }
 }
 
 void gerar_emails(void){
+    FILE * competidores;
+    competidores = fopen(ARQ_COMP, "rb");
+    FILE * emails;
+    emails = fopen(ARQ_EMAILS, "w");
 
+    competidor c;
+    while(fread(&c, sizeof(competidor), 1, competidores) > 0){
+        fprintf(emails, "%s,", c.email);
+    }
+
+    printf("\n\nLista de emails gravada no arquivo %s.\n\n", ARQ_EMAILS);
 }
