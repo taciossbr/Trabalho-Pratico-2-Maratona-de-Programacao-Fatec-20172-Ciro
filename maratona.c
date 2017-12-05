@@ -164,3 +164,84 @@ void listar_times(void){
     }
     putchar('\n');
 }
+
+void listar_competidores(void){
+    FILE * competidores;
+    competidores = fopen(ARQ_COMP, "rb");
+    FILE * times;
+    times = fopen(ARQ_TIME, "rb");
+
+    puts("Lista de Competidores\n");
+    int i;
+    for (i = 0; i < 132; i++){
+        putchar('-');
+    }
+    putchar('\n');
+    printf("|%-51.50s| %-31.30s| %-11.10s| %-31.30s|\n",
+           "Nome", "Email", "Nascimento", "Time");
+    for (i = 0; i < 132; i++){
+        putchar('-');
+    }
+    putchar('\n');
+
+    competidor c;
+    while(fread(&c, sizeof(competidor), 1, competidores) > 0){
+        time t;
+        fseek(times, (c.id_time - 1) * sizeof(time), SEEK_SET);
+        fread(&t, sizeof(time), 1, times);
+        printf("|%-51.50s| %-31.30s| %02d/%02d/%02d | %-31.30s|\n",
+               c.nome,
+               c.email,
+               c.nasc.dia,
+               c.nasc.mes,
+               c.nasc.ano,
+               t.nome);
+    }
+    for (i = 0; i < 132; i++){
+        putchar('-');
+    }
+    printf("\n\n");
+
+    
+
+    // pergunta se o usario deseja gravar um arquivo com a listagem
+    printf("Você deseja salvar esta tabela em um arquivo? ");
+    char o;
+    scanf(" %c", &o);
+
+    if (o == 'S' || o == 's'){
+        FILE * listagem;
+        listagem = fopen(ARQ_LISTAGEM, "w");
+        fputs("Lista de Competidores\n", listagem);
+        for (i = 0; i < 132; i++){
+            fprintf(listagem, "-");
+        }
+        fprintf(listagem, "\n");
+        fprintf(listagem, "|%-51.50s| %-31.30s| %-11.10s| %-31.30s|\n",
+            "Nome", "Email", "Nascimento", "Time");
+        for (i = 0; i < 132; i++){
+            fprintf(listagem, "-");
+        }
+        fprintf(listagem, "\n");
+
+        competidor c;
+        fseek(competidores, 0, SEEK_SET);
+        while(fread(&c, sizeof(competidor), 1, competidores) > 0){
+            time t;
+            fseek(times, (c.id_time - 1) * sizeof(time), SEEK_SET);
+            fread(&t, sizeof(time), 1, times);
+            fprintf(listagem, "|%-51.50s| %-31.30s| %02d/%02d/%02d | %-31.30s|\n",
+                c.nome,
+                c.email,
+                c.nasc.dia,
+                c.nasc.mes,
+                c.nasc.ano,
+                t.nome);
+        }
+        for (i = 0; i < 132; i++){
+            fprintf(listagem, "-");
+        }
+        fprintf(listagem, "\n\n");
+        
+    }
+}
