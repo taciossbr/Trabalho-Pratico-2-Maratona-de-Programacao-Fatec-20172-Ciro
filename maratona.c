@@ -149,8 +149,13 @@ void consultar_time(void){
     
 }
 
+/*  listar_times
+
+    exibe na tela uma tabela com a listagem de todos os times cadastrados
+*/
 void listar_times(void){
     FILE * times;
+    // verifica  se o arquivo foi aberto corretamente
     if ((times = fopen(ARQ_TIME, "rb")) == NULL) {
         fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
                 ARQ_TIME);
