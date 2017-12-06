@@ -11,10 +11,16 @@ Vinícius dos Santos Rocha
 
 #include "maratona.h"
 
+/*  cadastrar_time
+
+    função responsável por receber os dados dos times e dos competidores,
+e grava-los em seus respectivos arquivos.
+*/
 void cadastrar_time(void){
     FILE * times;
     time t;
     
+    // verifica  se o arquivo foi aberto corretamente
     if ((times = fopen(ARQ_TIME, "ab")) == NULL) {
         fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
                 ARQ_TIME);
@@ -39,14 +45,16 @@ void cadastrar_time(void){
     puts("Time cadastrado com sucesso!\n");
     
     printf("Cadastro de competidores do time: %s\n\n", t.nome);
+
     FILE * competidores;
-    competidor c[3];
-    
+    // verifica se o arquivo foi aberto corretamente
     if ((competidores = fopen(ARQ_COMP, "ab")) == NULL){
         fprintf(stderr, "\nErro: não foi possivel abrir o arquivo %s!\n",
                 ARQ_COMP);
         return;
     }
+    competidor c[3];
+
     // desloca o indicador de posição para o final do arquivo
     fseek(competidores, 0, SEEK_END);
     
@@ -71,11 +79,15 @@ void cadastrar_time(void){
     }
     fclose(competidores);
 }
+/*  consultar_time
 
+    le o login do time, verifica se é válido, e imprime as informações 
+referentes ao time
 
+*/
 void consultar_time(void){
     FILE * times, * competidores;
-    
+    // verifica  se o arquivos foram abertos corretamente
     if ((times = fopen(ARQ_TIME, "rb")) == NULL) {
         fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
                 ARQ_TIME);
@@ -104,9 +116,7 @@ void consultar_time(void){
     if (id * sizeof(time) > tam){
         fprintf(stderr, "O Time que você procura não esta cadastrado.\n");
     } else {
-        // printf("\n\n\n\n%d\n\n\n\n\n", id);
         // desloca o indicador de posição para a posição do registro do time
-        // printf("\n\n\n\n%d\n\n\n\n\n", (id - 1) * sizeof(time));
         fseek(times, (id - 1) * sizeof(time), SEEK_SET);
         fread(&t, sizeof(time), 1, times);
         fclose(times);
@@ -117,6 +127,7 @@ void consultar_time(void){
         printf("Senha:\t%s\n", t.senha);
         
         printf("\n\nCompetidores do time\n\n");
+        // desloca o indicador de posição para a posição do registro dos competidores
         fseek(competidores, (t.id - 1) * sizeof(competidor) * 3, SEEK_SET);
         fread(&c, sizeof(competidor), 3, competidores);
         fclose(competidores);
