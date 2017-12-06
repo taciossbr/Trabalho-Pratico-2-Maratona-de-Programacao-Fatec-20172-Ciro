@@ -398,12 +398,13 @@ void gerar_etiquetas(void){
     fclose(competidores);
 }
 
+
 void imprimir_primeiro_nome(const char * nome){
     FILE * etiquetas;
     etiquetas = fopen(ARQ_ETIQUETAS, "a");
+    // percorre a string ate o primeiro espaço ou ate o seu fim
     int i;
     for (i = 0; nome[i] != ' ' && nome[i] != '\0'; i++){
-    //putchar(nome[i]);
     }
     char primeiro[61];
     strncpy(primeiro, nome, i);
