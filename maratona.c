@@ -189,19 +189,25 @@ void listar_times(void){
     fclose(times);
 }
 
+/*  listar_competidores
+
+    exibe na tela uma tabela com todos os competidores e imprime, caso o usuario solocite, esta mesma
+tabela em um arquivo
+*/
 void listar_competidores(void){
     /* Obs.:
          Por questões de melhor legibilidade da tabela em telas pequenas 
         decidimos exibir apenas os caracteres iniciais das strings contendo o nome dos competidores
     */
     FILE * competidores;
-    
+    // verifica  se o arquivo foi aberto corretamente
     if ((competidores = fopen(ARQ_COMP, "rb")) == NULL) {
         fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
                 ARQ_COMP);
         return;
     }
     FILE * times;
+    // verifica  se o arquivo foi aberto corretamente
     if ((times = fopen(ARQ_TIME, "rb")) == NULL) {
         fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
                 ARQ_TIME);
@@ -293,9 +299,13 @@ void listar_competidores(void){
     fclose(competidores);
     fclose(times);
 }
+/*  gerar_emails
 
+    grava um arquivo com os emails dos competidores eparados por virgulas
+*/
 void gerar_emails(void){
     FILE * competidores, * times, * emails;
+    // verifica  se o arquivos foram abertos corretamente
     if ((competidores = fopen(ARQ_COMP, "rb")) == NULL) {
         fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
                 ARQ_COMP);
@@ -318,6 +328,7 @@ void gerar_emails(void){
     int q = ftell(competidores) / sizeof(competidor);
     rewind(competidores);
 
+    // gera um vetor com todos os competidores cadastrados
     int i = 0;
     competidor c[q];
     while(fread(&c[i], sizeof(competidor), 1, competidores) > 0){
@@ -335,15 +346,18 @@ void gerar_emails(void){
     fclose(emails);
 }
 
+/*  gerar_etiquetas
+
+    gera um arquivo de etiquetas dos times cadastrados
+*/
 void gerar_etiquetas(void){
     FILE * etiquetas, * times, *competidores;
-
+    // verifica se os arquivos foram abertos corretamente
     if ((competidores = fopen(ARQ_COMP, "rb")) == NULL) {
         fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
                 ARQ_COMP);
         return;
     }
-    
     if ((times = fopen(ARQ_TIME, "rb")) == NULL) {
         fprintf(stderr, "\nErro: não foi possível abrir o arquivo %s!\n", 
                 ARQ_TIME);
@@ -354,6 +368,9 @@ void gerar_etiquetas(void){
                 ARQ_ETIQUETAS);
         return;
     }
+
+
+    // realiza as gravações das etiquetas em arquivo
     time t;
     competidor c[3];
     while(fread(&t, sizeof(time), 1, times) > 0){
@@ -365,6 +382,7 @@ void gerar_etiquetas(void){
         fprintf(etiquetas, "(");
         int i;
         for (i = 0; i < 3; i++){
+            // fecha o arquivo e disponibiliza-o para a função imprimir_primeiro_nome
             fclose(etiquetas);
             imprimir_primeiro_nome(c[i].nome);
             etiquetas = fopen(ARQ_ETIQUETAS, "a");
