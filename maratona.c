@@ -21,7 +21,7 @@ void cadastrar_time(void){
     
     sprintf(t.login, "team%d", t.id); // gera o login do time
     
-    puts("\nNovo cliente");
+    puts("\nCadastro de time\n\n");
     printf("ID do time: %d\n", t.id); 
     printf("Login do time: %s\n", t.login);
     printf("Digite uma senha: ");
@@ -128,8 +128,6 @@ void consultar_time(void){
         } 
     
     }
-    fclose(competidores);
-    fclose(times);
             
     
 }
@@ -228,7 +226,6 @@ void listar_competidores(void){
 
     if (o == 'S' || o == 's'){
         rewind(competidores);
-        puts("hello");
         // grava o arquivo de listagem
         FILE * listagem;
         if ((listagem = fopen(ARQ_LISTAGEM, "w")) == NULL) {
@@ -253,7 +250,6 @@ void listar_competidores(void){
         competidor c;
 
         while(fread(&c, sizeof(competidor), 1, competidores) > 0){
-        puts(c.nome);
             time t;
             fseek(times, (c.id_time - 1) * sizeof(time), SEEK_SET);
             fread(&t, sizeof(time), 1, times);
@@ -295,10 +291,21 @@ void gerar_emails(void){
         return;
     }
     
+    // obtem a quantidade de competidores cadastrados
+    fseek(competidores, 0, SEEK_END);
+    int q = ftell(competidores) / sizeof(competidor);
+    rewind(competidores);
 
-    competidor c;
-    while(fread(&c, sizeof(competidor), 1, competidores) > 0){
-        fprintf(emails, "%s,", c.email);
+    int i = 0;
+    competidor c[q];
+    while(fread(&c[i], sizeof(competidor), 1, competidores) > 0){
+        i++; 
+    }
+    for (i = 0; i < q; i++){
+        fprintf(emails, "%s", c[i].email);
+        if (i != q - 1){
+            fputc(',', emails);
+        }
     }
 
     printf("\n\nLista de emails gravada no arquivo %s.\n\n", ARQ_EMAILS);
@@ -358,11 +365,9 @@ void imprimir_primeiro_nome(const char * nome){
     for (i = 0; nome[i] != ' ' && nome[i] != '\0'; i++){
     //putchar(nome[i]);
     }
-    printf("%d\n", i);
     char primeiro[61];
     strncpy(primeiro, nome, i);
     primeiro[i] = '\0';
-    puts(primeiro);
     fprintf(etiquetas, "%s", primeiro);
     fclose(etiquetas);
 }
