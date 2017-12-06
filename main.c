@@ -1,5 +1,10 @@
-/* main.c */
- 
+/* main.c
+Autores:
+Gabriel Ciccotti Monteiro da Silva
+Tacio dos Santos Souza     
+Vinícius dos Santos Rocha
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include "maratona.h"
@@ -48,27 +53,25 @@ int main() {
     } while (op != SAIR);
     return 0;
 }
-
+/*  menu
+    int n: número de opções do menu
+    char * ops[]: vetor com as opções
+*/
 int menu(int n, char * ops[]){
     printf("----------------------------------\n");
-    printf("Menu\n");
+    printf("               Menu\n");
     printf("----------------------------------\n\n");
+
+    // imprime o menu
     int i;
     for (i = 0; i < n; i++){
-        printf("%d-\t%s\n", i + 1, ops[i]);
+        printf("%d-%s\n", i + 1, ops[i]);
     }
+
+    // recebe input do usuário
     int op;
     printf("\nEscolha a opção desejada: ");
     scanf(" %d", &op);
-    while (1 > op || op > 7){
-        printf("Opção inválida.\n\n\n");
-        for (i = 0; i < n; i++){
-            printf("%d-\t%s\n", i + 1, ops[i]);
-        }
-        int op;
-        printf("Escolha a opção desejada: ");
-        scanf(" %d", &op);
-    }
     return op;
 }
 

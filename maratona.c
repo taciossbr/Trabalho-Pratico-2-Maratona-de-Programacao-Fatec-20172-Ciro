@@ -1,3 +1,9 @@
+/* maratona.c 
+Autores:
+Gabriel Ciccotti Monteiro da Silva
+Tacio dos Santos Souza     
+Vinícius dos Santos Rocha
+*/
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>

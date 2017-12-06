@@ -1,4 +1,9 @@
-/* maratona.h */
+/* maratona.h 
+Autores:
+Gabriel Ciccotti Monteiro da Silva
+Tacio dos Santos Souza     
+Vinícius dos Santos Rocha
+*/
 #ifndef _MARATONA_H
 #define _MARATONA_H
 #define ARQ_TIME        "time.dat"
