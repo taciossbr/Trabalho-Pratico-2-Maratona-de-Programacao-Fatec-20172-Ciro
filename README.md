@@ -211,7 +211,7 @@ programa. A legibilidade do código será levada em consideração pelo critéri
 avaliação do trabalho.
 
 7. Você deve enviar os arquivos fonte (.c e .h) da aplicação para o seguinte e-mail:
-********
+c****t@g****.com
 
 8. Guarde uma cópia do seu trabalho pelo menos até o final do semestre. Este material
 pode ser solicitado pelo professor em caso de extravio.
