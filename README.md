@@ -111,7 +111,6 @@ arquivos main.c e maratona.h, mostrados abaixo:
     void listar_competidores(void);
     void gerar_emails(void);
     void gerar_etiquetas(void);
-    void imprimir_primeiro_nome(const char *);
 
     #endif
 
